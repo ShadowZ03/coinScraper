@@ -15,6 +15,7 @@ def getData(symbol):
         'currentPrice': soup.find("div", {"class": "D(ib) Mend(20px)"}).find_all('fin-streamer')[0].text,
         'priceChange': soup.find("div", {"class": "D(ib) Mend(20px)"}).find_all('span')[0].text,
         'percentChange': soup.find("div", {"class": "D(ib) Mend(20px)"}).find_all('span')[1].text,
+        'volume': soup.find("div", {"class": "D(ib) W(1/2) Bxz(bb) Pstart(12px) Va(t) ie-7_D(i) ie-7_Pos(a) smartphone_D(b) smartphone_W(100%) smartphone_Pstart(0px) smartphone_BdB smartphone_Bdc($seperatorColor)"}).find_all('tr')[-3].text,
     }
     return stock
 
