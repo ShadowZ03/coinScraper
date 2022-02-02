@@ -8,6 +8,7 @@ import matplotlib.dates as mpl_dates
 ##########
 
 mystocks = ['AAVE-USD', 'BTC-USD', 'MATIC-USD', 'DOT-USD', 'VGX-USD', 'ADA-USD', 'XLM-USD']
+d = {}
 
 #####
 def getData(coin):
@@ -19,27 +20,25 @@ def getData(coin):
     
     print(' ' * 5)
     print('---This is Data for: '+ coin + '---')
-        
-    df = pd.read_csv(stock, index_col=0, parse_dates=True)
-    #df.to_csv()
-    #df.to_excel()
-    # Extracting Data for plotting
-    del df['Adj Close']
 
+    #Conditioning Data    
+    df = pd.read_csv(stock, index_col=0, parse_dates=True)
+    del df['Adj Close']
+    
+    #Creating external Dictionary for external reference
+    d[coin] = df
+    
     df.index.name = 'Date'
     df.shape
+    
+    # Extracting Data for plotting
+    #df.to_csv()
+    #df.to_excel()
     print(df.head())
     print('Printing Graph')
-    #mpf.plot(df, type='candle', show_nontrading=True, title = coin)
+    mpf.plot(df, type='candle', show_nontrading=True, title = coin)
 
-        #Making Dataframes for each coin
-
-    d = {}
-    for name in coin:
-        d[name] = pd.DataFrame()
-
-    print(d['AAVE-USD'])
-
+#Kicker for program
 for item in mystocks:
     print(' ' * 5)
     print('---Getting data for: ' + item + '---')
@@ -49,3 +48,7 @@ for item in mystocks:
 
     print('---Completed data for: ' + item + '---')
 
+print('***Run Complete***')
+
+#How to access each coin DF outside of getData() function
+##print(d['XLM-USD'])
