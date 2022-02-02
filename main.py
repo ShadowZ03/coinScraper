@@ -1,31 +1,43 @@
-import requests
-from bs4 import BeautifulSoup
-import json
+import time
+import datetime
+import pandas as pd
+import matplotlib.pyplot as plt
+import mplfinance as mpf
+import matplotlib.dates as mpl_dates
 
-mystocks = ['AAVE', 'BTC', 'MATIC', 'DOT', 'VGX', 'ADA', 'XLM']
-stockdata = []
+##########
 
-def getData(symbol):
-    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36'}
-    url3 = f'https://finance.yahoo.com/quote/{symbol}-USD'
-    r = requests.get(url3, headers=headers)
-    soup = BeautifulSoup(r.text, 'html.parser')
-    stock = {
-        'symbol': symbol,
-        'currentPrice': soup.find("div", {"class": "D(ib) Mend(20px)"}).find_all('fin-streamer')[0].text,
-        'priceChange': soup.find("div", {"class": "D(ib) Mend(20px)"}).find_all('span')[0].text,
-        'percentChange': soup.find("div", {"class": "D(ib) Mend(20px)"}).find_all('span')[1].text,
-        'volume': soup.find("div", {"class": "D(ib) W(1/2) Bxz(bb) Pstart(12px) Va(t) ie-7_D(i) ie-7_Pos(a) smartphone_D(b) smartphone_W(100%) smartphone_Pstart(0px) smartphone_BdB smartphone_Bdc($seperatorColor)"}).find_all('tr')[-3].text,
-    }
-    return stock
+mystocks = ['AAVE-USD', 'BTC-USD', 'MATIC-USD', 'DOT-USD', 'VGX-USD', 'ADA-USD', 'XLM-USD']
+
+#####
+def getData(coin):
+    period1 = int(time.mktime(datetime.datetime(2021, 1, 1, 00, 00).timetuple()))
+    period2 = int(time.mktime(datetime.datetime(2022, 2, 2, 23, 59).timetuple()))
+    interval = '1d' #1d, 1m, 1wk
+
+    stock= f'https://query1.finance.yahoo.com/v7/finance/download/{coin}?period1={period1}&period2={period2}&interval={interval}&events=history&includeAdjustedClose=true'
+    
+    print(' ' * 5)
+    print('---This is Data for: '+ coin + '---')
+        
+    df = pd.read_csv(stock, index_col=0, parse_dates=True)
+    #df.to_csv()
+    #df.to_excel()
+    # Extracting Data for plotting
+    del df['Adj Close']
+
+    df.index.name = 'Date'
+    df.shape
+    print(df.head())
+    mpf.plot(df, type='candle', show_nontrading=True, title = coin)
+
 
 for item in mystocks:
-    stockdata.append(getData(item))
-    print('Getting: ', item)
+    print(' ' * 5)
+    print('---Getting data for: ' + item + '---')
+    print(' ' * 5)
 
-with open('stockdata.json', 'w') as f:
-    json.dump(stockdata, f)
+    getData(item)
 
-print('fin')
+    print('---Completed data for: ' + item + '---')
 
-  
