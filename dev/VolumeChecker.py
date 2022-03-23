@@ -7,14 +7,16 @@ import matplotlib.dates as mpl_dates
 
 ##########
 
-mystocks = ['AAVE-USD', 'BTC-USD', 'MATIC-USD', 'DOT-USD', 'VGX-USD', 'ADA-USD', 'XLM-USD']
+mystocks = ['AAVE-USD']
 d = {}
+check = 0
+noCheck = 0
 
 #####
 def getData(coin):
-    period1 = int(time.mktime(datetime.datetime(2021, 1, 1, 00, 00).timetuple()))
-    period2 = int(time.mktime(datetime.datetime(2022, 2, 2, 23, 59).timetuple()))
-    interval = '1wk' #1d, 1m, 1wk
+    period1 = int(time.mktime(datetime.datetime(2022, 3, 1, 00, 00).timetuple()))
+    period2 = int(time.mktime(datetime.datetime(2022, 3, 17, 23, 59).timetuple()))
+    interval = '1d' #1d, 1m, 1wk
 
     stock= f'https://query1.finance.yahoo.com/v7/finance/download/{coin}?period1={period1}&period2={period2}&interval={interval}&events=history&includeAdjustedClose=true'
     
@@ -51,4 +53,18 @@ for item in mystocks:
 print('***Run Complete***')
 
 #How to access each coin DF outside of getData() function
-print(d['XLM-USD'])
+##print(d['XLM-USD'])
+
+print('start of new function')
+for vol in d['AAVE-USD']['Volume']:
+    if vol > d['AAVE-USD']['Volume'][0]:
+        check = check + 1
+        print(vol)
+     
+    else:
+        noCheck = noCheck + 1
+
+
+print(d['AAVE-USD']['Volume'])
+print(check)
+print(noCheck)

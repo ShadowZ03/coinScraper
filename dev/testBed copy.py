@@ -13,8 +13,8 @@ d = {}
 #####
 def getData(coin):
     period1 = int(time.mktime(datetime.datetime(2021, 1, 1, 00, 00).timetuple()))
-    period2 = int(time.mktime(datetime.datetime(2022, 2, 2, 23, 59).timetuple()))
-    interval = '1wk' #1d, 1m, 1wk
+    period2 = int(time.mktime(datetime.datetime(2022, 3, 17, 23, 59).timetuple()))
+    interval = '1d' #1d, 1m, 1wk
 
     stock= f'https://query1.finance.yahoo.com/v7/finance/download/{coin}?period1={period1}&period2={period2}&interval={interval}&events=history&includeAdjustedClose=true'
     
@@ -51,4 +51,45 @@ for item in mystocks:
 print('***Run Complete***')
 
 #How to access each coin DF outside of getData() function
-print(d['XLM-USD'])
+##print(d['XLM-USD'])
+
+x=[]
+for i in df:
+    y = [df.index(i), df['Close']]
+    x.append(y)
+
+print(x)
+print('--------------------')
+
+L = []
+for time in pd.date_range(begin1, stop1):    
+    print (pd.date_range(time, freq='D', periods=30).strftime("%Y-%m-%d %H:%M:%S").tolist())
+    if time in L:
+        print('already have it')
+    else:
+        L.append(pd.date_range(time, freq='D', periods=31).strftime("%Y-%m-%d").tolist())
+
+
+print('--------------------')
+
+print(L)
+
+print('--------------------')
+groups = []
+datepair = [(d1,d2) for d1, d2, in zip(L[0],L[1:])]
+print(datepair)
+print('--------------------')
+print('--------------------')
+print(L[0])
+print('--------------------')
+print('--------------------')
+groups = []
+uniquekeys = []
+data = L[0]
+for k, g in groupby(data, key=lambda x: x[5]):
+    groups.append(list(g))      # Store group iterator as a list
+    uniquekeys.append(k)
+
+print(groups)
+
+print(uniquekeys)
