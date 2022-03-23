@@ -1,30 +1,54 @@
-import requests
-from bs4 import BeautifulSoup
-import json
+import time
+import datetime
+import pandas as pd
+import matplotlib.pyplot as plt
+import mplfinance as mpf
+import matplotlib.dates as mpl_dates
 
-mystocks = ['AAVE', 'BTC', 'MATIC', 'DOT', 'VGX', 'ADA', 'XLM']
-stockdata = []
+##########
 
-def getData(symbol):
-    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36'}
-    url3 = f'https://finance.yahoo.com/quote/{symbol}-USD'
-    r = requests.get(url3, headers=headers)
-    soup = BeautifulSoup(r.text, 'html.parser')
-    stock = {
-        'symbol': symbol,
-        'currentPrice': soup.find("div", {"class": "D(ib) Mend(20px)"}).find_all('fin-streamer')[0].text,
-        'priceChange': soup.find("div", {"class": "D(ib) Mend(20px)"}).find_all('span')[0].text,
-        'percentChange': soup.find("div", {"class": "D(ib) Mend(20px)"}).find_all('span')[1].text,
-    }
-    return stock
+mystocks = ['AAVE-USD', 'BTC-USD', 'MATIC-USD', 'DOT-USD', 'VGX-USD', 'ADA-USD', 'XLM-USD']
+d = {}
 
+#####
+def getData(coin):
+    period1 = int(time.mktime(datetime.datetime(2021, 1, 1, 00, 00).timetuple()))
+    period2 = int(time.mktime(datetime.datetime(2022, 2, 2, 23, 59).timetuple()))
+    interval = '1wk' #1d, 1m, 1wk
+
+    stock= f'https://query1.finance.yahoo.com/v7/finance/download/{coin}?period1={period1}&period2={period2}&interval={interval}&events=history&includeAdjustedClose=true'
+    
+    print(' ' * 5)
+    print('---This is Data for: '+ coin + '---')
+
+    #Conditioning Data    
+    df = pd.read_csv(stock, index_col=0, parse_dates=True)
+    del df['Adj Close']
+    
+    #Creating external Dictionary for external reference
+    d[coin] = df
+    
+    df.index.name = 'Date'
+    df.shape
+    
+    # Extracting Data for plotting
+    #df.to_csv()
+    #df.to_excel()
+    print(df.head())
+    print('Printing Graph')
+    mpf.plot(df, type='candle', show_nontrading=True, title = coin)
+
+#Kicker for program
 for item in mystocks:
-    stockdata.append(getData(item))
-    print('Getting: ', item)
+    print(' ' * 5)
+    print('---Getting data for: ' + item + '---')
+    print(' ' * 5)
 
-with open('stockdata.json', 'w') as f:
-    json.dump(stockdata, f)
+    getData(item)
 
-print('fin')
+    print('---Completed data for: ' + item + '---')
 
-  
+print('***Run Complete***')
+
+#How to access each coin DF outside of getData() function
+print(d['XLM-USD'])
