@@ -6,18 +6,22 @@ import mplfinance as mpf
 import matplotlib.dates as mpl_dates
 
 ##########
+#Change Variables below
+mystocks = ['MATIC-USD', 'PSEC']
+graph = False
+period1 = int(time.mktime(datetime.datetime(2022, 4, 10, 00, 00).timetuple()))
+period2 = int(time.mktime(datetime.datetime(2022, 4, 24, 23, 59).timetuple()))
+interval = '1d' #1d, 1m, 1wk
+#End of Change Variables
 
-mystocks = ['AAVE-USD', 'BTC-USD', 'MATIC-USD', 'DOT-USD', 'VGX-USD', 'ADA-USD', 'XLM-USD']
+#Variables needed within the functions
 d = {}
 
 #####
-def getData(coin):
-    period1 = int(time.mktime(datetime.datetime(2021, 1, 1, 00, 00).timetuple()))
-    period2 = int(time.mktime(datetime.datetime(2022, 3, 17, 23, 59).timetuple()))
-    interval = '1d' #1d, 1m, 1wk
 
-    stock= f'https://query1.finance.yahoo.com/v7/finance/download/{coin}?period1={period1}&period2={period2}&interval={interval}&events=history&includeAdjustedClose=true'
-    
+def getData(coin):
+    stock = f'https://query1.finance.yahoo.com/v7/finance/download/{coin}?period1={period1}&period2={period2}&interval={interval}&events=history&includeAdjustedClose=true'
+   
     print(' ' * 5)
     print('---This is Data for: '+ coin + '---')
 
@@ -35,61 +39,69 @@ def getData(coin):
     #df.to_csv()
     #df.to_excel()
     print(df.head())
-    print('Printing Graph')
-    mpf.plot(df, type='candle', show_nontrading=True, title = coin)
+    if graph == True:
+        print('Printing Graph')
+        mpf.plot(df, type='candle', show_nontrading=True, title = coin)
+    else:
+        print(' ' * 5)
+        print('--- Skipping Graph ---')
+        print(' ' * 5)
 
-#Kicker for program
+def volChecker(coin):
+    a = 0 
+    b = 1
+    pos = 0
+    neg = 0
+
+    length = len(d[coin].index)
+    counter = length - 1
+
+    while counter > 0 & b < length:
+        counter -= 1
+        if d[coin]["Volume"].loc[d[coin].index[a]] < d[coin]["Volume"].loc[d[coin].index[b]]:
+            pos += 1
+            a += 1
+            b += 1
+        else:
+            neg += 1
+            a += 1
+            b += 1
+
+    print(f'For Volume of {coin}: {pos} positives , {neg} negatives')
+    print(f'***VolChecker Complete for {coin}***')                 
+
+def priceChecker(coin):
+    a = 0 
+    b = 1
+    pos = 0
+    neg = 0
+
+    length = len(d[coin].index)
+    counter = length - 1
+
+    while counter > 0 & b < length:
+        counter -= 1
+        if d[coin]["Close"].loc[d[coin].index[a]] < d[coin]["Close"].loc[d[coin].index[b]]:
+            pos += 1
+            a += 1
+            b += 1
+        else:
+            neg += 1
+            a += 1
+            b += 1
+
+    print(f'For Close of {coin}: {pos} positives , {neg} negatives')
+    print(f'***PriceChecker Complete for {coin}***')          
+
+#Starter for program
 for item in mystocks:
     print(' ' * 5)
     print('---Getting data for: ' + item + '---')
     print(' ' * 5)
 
     getData(item)
-
+    volChecker(item)
+    priceChecker(item)
     print('---Completed data for: ' + item + '---')
 
 print('***Run Complete***')
-
-#How to access each coin DF outside of getData() function
-##print(d['XLM-USD'])
-
-x=[]
-for i in df:
-    y = [df.index(i), df['Close']]
-    x.append(y)
-
-print(x)
-print('--------------------')
-
-L = []
-for time in pd.date_range(begin1, stop1):    
-    print (pd.date_range(time, freq='D', periods=30).strftime("%Y-%m-%d %H:%M:%S").tolist())
-    if time in L:
-        print('already have it')
-    else:
-        L.append(pd.date_range(time, freq='D', periods=31).strftime("%Y-%m-%d").tolist())
-
-
-print('--------------------')
-
-print(L)
-
-print('--------------------')
-groups = []
-datepair = [(d1,d2) for d1, d2, in zip(L[0],L[1:])]
-print(datepair)
-print('--------------------')
-print('--------------------')
-print(L[0])
-print('--------------------')
-print('--------------------')
-groups = []
-uniquekeys = []
-data = L[0]
-for k, g in groupby(data, key=lambda x: x[5]):
-    groups.append(list(g))      # Store group iterator as a list
-    uniquekeys.append(k)
-
-print(groups)
-
-print(uniquekeys)
