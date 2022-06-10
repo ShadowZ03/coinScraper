@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 sns.set(style='darkgrid')
-data = investpy.get_crypto_historical_data(crypto='vgx-usd',
+data = investpy.get_crypto_historical_data(crypto='btc-usd',
                                            from_date='01/01/2022',
                                            to_date='02/04/2022')
 
