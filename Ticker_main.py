@@ -23,8 +23,8 @@ class TrendAnalysis:
     
     def getData(self):
         graph = False
-        period1 = int(time.mktime(datetime.datetime(2022, 5, 1, 00, 00).timetuple()))
-        period2 = int(time.mktime(datetime.datetime(2022, 6, 9, 23, 59).timetuple()))
+        period1 = int(time.mktime(datetime.datetime(2022, 4, 1, 00, 00).timetuple()))
+        period2 = int(time.mktime(datetime.datetime(2022, 6, 28, 23, 59).timetuple()))
         interval = '1d' #1d, 1m, 1wk
             
         d = {}
@@ -146,7 +146,7 @@ class TrendAnalysis:
     
     #Starter for program
 def run():
-    mystocks = ["PSEC", "AAPL", "VGX-USD", "BTC-USD"]
+    mystocks = ["PSEC", "AAPL", "STAG"]
     for stock in mystocks:
         t = TrendAnalysis(stock)
         t.getData()  

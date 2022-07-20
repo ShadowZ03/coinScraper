@@ -6,6 +6,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import mplfinance as mpf
 import matplotlib.dates as mpl_dates
+# import investpy
+# import trendet
 
 class checker:
     overall_pos = 0
